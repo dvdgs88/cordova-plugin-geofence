@@ -350,9 +350,7 @@ window.geofence.onNotificationClicked = function (notificationData) {
 Optionally you can perform POST callouts to a remote server when a transition is handled
 
 ```javascript
-window.geofence.notifyRemoteServer = true;
-window.geofence.remoteServerURL = 'http://httpbin.org/post';
-window.geofence.remoteServerPostString = 'foo=bar&baz=qux';
+window.geofence.setRemoteServerSettings(true,'http://httpbin.org/post','foo=bar&baz=qux');
 ```
 
 # Example usage

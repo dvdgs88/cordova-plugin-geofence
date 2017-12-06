@@ -26,9 +26,6 @@ func log(_ messages: [String]) {
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     lazy var geoNotificationManager = GeoNotificationManager()
-    var notifyRemoteServer: Bool?
-    var remoteServerURL: String?
-    var remoteServerPostString: String = ""
     let priority = DispatchQueue.GlobalQueuePriority.default
 
     override func pluginInitialize () {
@@ -167,6 +164,15 @@ func log(_ messages: [String]) {
         }
     }
 
+    func setRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
+
+        self.geoNotificationManager.notifyRemoteServer = command.argument(at: 0) as! Bool
+        self.geoNotificationManager.remoteServerURL = command.argument(at: 1) as! String
+        self.geoNotificationManager.remoteServerPostString = command.argument(at: 2) as! String
+        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+        commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+    }
+
     func evaluateJs (_ script: String) {
         if let webView = webView {
             if let uiWebView = webView as? UIWebView {
@@ -228,6 +234,9 @@ class GeofenceFaker {
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let store = GeoNotificationStore()
+    var notifyRemoteServer: Bool?
+    var remoteServerURL: String?
+    var remoteServerPostString: String = ""
 
     override init() {
         log("GeoNotificationManager init")
