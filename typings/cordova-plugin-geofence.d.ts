@@ -53,10 +53,10 @@ interface Geofence {
 
 interface Notification {
   id?: number;
-  title?: string;
+  readonly title: string;
   text: string;
   smallIcon?: string;
-  icon?: string;
+  readonly icon: string;
   openAppOnClick?: boolean;
   vibration?: number[];
   data?: Object;
