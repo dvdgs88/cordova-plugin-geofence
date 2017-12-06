@@ -165,12 +165,15 @@ func log(_ messages: [String]) {
     }
 
     func setRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
-
-        self.geoNotificationManager.notifyRemoteServer = command.argument(at: 0) as! Bool
-        self.geoNotificationManager.remoteServerURL = command.argument(at: 1) as! String
-        self.geoNotificationManager.remoteServerPostString = command.argument(at: 2) as! String
-        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+        DispatchQueue.global(priority: priority).async {
+            self.geoNotificationManager.notifyRemoteServer = command.argument(at: 0) as! Bool
+            self.geoNotificationManager.remoteServerURL = command.argument(at: 1) as! String
+            self.geoNotificationManager.remoteServerPostString = command.argument(at: 2) as! String
+            DispatchQueue.main.async {
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            }
+        }
     }
 
     func evaluateJs (_ script: String) {
