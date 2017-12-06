@@ -398,8 +398,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 notifyAbout(geoNotification)
             }
 
-            if notifyRemoteServer != nil && remoteServerURL != nil {
-                HTTPHandler.postToServer(postURL: remoteServerURL, postString: remoteServerPostString)
+            if self.notifyRemoteServer != nil && self.remoteServerURL != nil {
+                HTTPHandler.postToServer(postURL: self.remoteServerURL, postString: self.remoteServerPostString)
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
