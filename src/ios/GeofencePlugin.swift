@@ -26,6 +26,9 @@ func log(_ messages: [String]) {
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     lazy var geoNotificationManager = GeoNotificationManager()
+    var notifyRemoteServer: Bool?
+    var remoteServerURL: String?
+    var remoteServerPostString: String = ""
     let priority = DispatchQueue.GlobalQueuePriority.default
 
     override func pluginInitialize () {
@@ -393,6 +396,10 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
             if geoNotification["notification"].isExists() {
                 notifyAbout(geoNotification)
+            }
+
+            if notifyRemoteServer != nil && remoteServerURL != nil {
+                HTTPHandler.postToServer(postURL: remoteServerURL, postString: remoteServerPostString)
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
