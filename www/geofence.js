@@ -133,13 +133,14 @@ module.exports = {
      * @param  {Boolean} notify remote server on transition
      * @param  {String} remote server url
      * @param  {String} remote server POST string
+     * @param  {String} remote server access token
      * @param  {Function} success callback
      * @param  {Function} error callback
      *
      * @return {Promise}
      */
-    setRemoteServerSettings: function (notifyRemoteServer, remoteServerURL, remoteServerPostString, success, error) {
-        return execPromise(success, error, "GeofencePlugin", "setRemoteServerSettings", [notifyRemoteServer, remoteServerURL, remoteServerPostString]);
+    setRemoteServerSettings: function (notifyRemoteServer, remoteServerURL, remoteServerPostString, remoteServerAccessToken, success, error) {
+        return execPromise(success, error, "GeofencePlugin", "setRemoteServerSettings", [notifyRemoteServer, remoteServerURL, remoteServerPostString, remoteServerAccessToken]);
     }
 };
 

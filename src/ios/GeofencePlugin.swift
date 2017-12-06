@@ -169,6 +169,7 @@ func log(_ messages: [String]) {
             self.geoNotificationManager.notifyRemoteServer = command.argument(at: 0) as! Bool
             self.geoNotificationManager.remoteServerURL = command.argument(at: 1) as! String
             self.geoNotificationManager.remoteServerPostString = command.argument(at: 2) as! String
+            self.geoNotificationManager.remoteServerAccessToken = command.argument(at: 3) as! String
             DispatchQueue.main.async {
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
                 self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
@@ -240,6 +241,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     var notifyRemoteServer: Bool?
     var remoteServerURL: String?
     var remoteServerPostString: String = ""
+    var remoteServerAccessToken: String = ""
 
     override init() {
         log("GeoNotificationManager init")
@@ -410,8 +412,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 notifyAbout(geoNotification)
             }
 
-            if self.notifyRemoteServer != nil && self.remoteServerURL != nil {
-                HTTPHandler.postToServer(postURL: self.remoteServerURL, postString: self.remoteServerPostString)
+            if self.notifyRemoteServer != nil && self.remoteServerURL != nil && self.remoteServerAccessToken != nil {
+                HTTPHandler.postToServer(postURL: self.remoteServerURL, postString: self.remoteServerPostString, accessToken: self.remoteServerAccessToken)
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
