@@ -23,13 +23,7 @@ Check out our example applications:
 
 From master
 ```
-cordova plugin add https://github.com/cowbell/cordova-plugin-geofence
-```
-
-Latest stable version
-
-```
-cordova plugin add cordova-plugin-geofence
+cordova plugin add https://github.com/scottbcovert/cordova-plugin-geofence
 ```
 
 ## Removing the Plugin from project
@@ -349,6 +343,16 @@ Android, iOS only
 window.geofence.onNotificationClicked = function (notificationData) {
     console.log('App opened from Geo Notification!', notificationData);
 };
+```
+
+## Notifying remote servers when handling transitions
+
+Optionally you can perform POST callouts to a remote server when a transition is handled
+
+```javascript
+window.geofence.notifyRemoteServer = true;
+window.geofence.remoteServerURL = 'http://httpbin.org/post';
+window.geofence.remoteServerPostString = 'foo=bar&baz=qux';
 ```
 
 # Example usage
