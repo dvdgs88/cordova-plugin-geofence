@@ -144,6 +144,8 @@
         <source-file src="src/ios/HTTPHandler.swift"/>
         <source-file src="src/ios/SwiftData.swift"/>
         <source-file src="src/ios/SwiftyJson.swift"/>
+        <source-file src="src/ios/KeychainItemAccessibility.swift"/>
+        <source-file src="src/ios/KeychainWrapper.swift"/>
         <framework src="libsqlite3.dylib"/>
         <framework src="WebKit.framework" weak="true" />
     </platform>

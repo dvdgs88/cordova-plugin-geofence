@@ -164,12 +164,23 @@ func log(_ messages: [String]) {
         }
     }
 
-    func setRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
+    func upsertRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
         DispatchQueue.global(priority: priority).async {
-            self.geoNotificationManager.notifyRemoteServer = command.argument(at: 0) as! Bool
-            self.geoNotificationManager.remoteServerURL = command.argument(at: 1) as! String
-            self.geoNotificationManager.remoteServerPostString = command.argument(at: 2) as! String
-            self.geoNotificationManager.remoteServerAccessToken = command.argument(at: 3) as! String
+            KeychainWrapper.standard.set(command.argument(at: 0) as! String, forKey: self.geoNotificationManager.remoteServerURLName, withAccessibility: .afterFirstUnlock)
+            KeychainWrapper.standard.set(command.argument(at: 1) as! String, forKey: self.geoNotificationManager.remoteServerPostStringName, withAccessibility: .afterFirstUnlock)
+            KeychainWrapper.standard.set(command.argument(at: 2) as! String, forKey: self.geoNotificationManager.remoteServerAccessTokenName, withAccessibility: .afterFirstUnlock)
+            DispatchQueue.main.async {
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            }
+        }
+    }
+
+    func clearRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
+        DispatchQueue.global(priority: priority).async {
+            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerURLName)
+            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerPostStringName)
+            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerAccessTokenName)
             DispatchQueue.main.async {
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
                 self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
@@ -238,10 +249,9 @@ class GeofenceFaker {
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let store = GeoNotificationStore()
-    var notifyRemoteServer: Bool?
-    var remoteServerURL: String?
-    var remoteServerPostString: String = ""
-    var remoteServerAccessToken: String = ""
+    let remoteServerURLName = "remoteServerURL"
+    let remoteServerPostStringName = "remoteServerPostString"
+    let remoteServerAccessTokenName = "remoteServerAccessToken"
 
     override init() {
         log("GeoNotificationManager init")
@@ -412,8 +422,11 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 notifyAbout(geoNotification)
             }
 
-            if self.notifyRemoteServer != nil && self.remoteServerURL != nil && self.remoteServerAccessToken != nil {
-                HTTPHandler.postToServer(postURL: self.remoteServerURL, postString: self.remoteServerPostString, accessToken: self.remoteServerAccessToken)
+            let remoteServerURL: String? = KeychainWrapper.standard.string(forKey: self.remoteServerURLName)
+            let remoteServerPostString: String! = KeychainWrapper.standard.string(forKey: self.remoteServerPostStringName) ?? ""
+            let remoteServerAccessToken: String? = KeychainWrapper.standard.string(forKey: self.remoteServerAccessTokenName)
+            if remoteServerURL != nil && remoteServerAccessToken != nil {
+                HTTPHandler.postToServer(postURL: remoteServerURL, postString: remoteServerPostString, accessToken: remoteServerAccessToken)
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))

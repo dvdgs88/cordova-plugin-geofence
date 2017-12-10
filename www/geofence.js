@@ -129,7 +129,7 @@ module.exports = {
         return execPromise(success, error, "GeofencePlugin", "ping", []);
     },
     /**
-     * Called to set remote server settings
+     * Called to insert or update remote server settings
      * @param  {Boolean} notify remote server on transition
      * @param  {String} remote server url
      * @param  {String} remote server POST string
@@ -139,8 +139,18 @@ module.exports = {
      *
      * @return {Promise}
      */
-    setRemoteServerSettings: function (notifyRemoteServer, remoteServerURL, remoteServerPostString, remoteServerAccessToken, success, error) {
-        return execPromise(success, error, "GeofencePlugin", "setRemoteServerSettings", [notifyRemoteServer, remoteServerURL, remoteServerPostString, remoteServerAccessToken]);
+    upsertRemoteServerSettings: function (remoteServerURL, remoteServerPostString, remoteServerAccessToken, success, error) {
+        return execPromise(success, error, "GeofencePlugin", "upsertRemoteServerSettings", [remoteServerURL, remoteServerPostString, remoteServerAccessToken]);
+    },
+    /**
+     * Called to clear remote server settings
+     * @param  {Function} success callback
+     * @param  {Function} error callback
+     *
+     * @return {Promise}
+     */
+    clearRemoteServerSettings: function (success, error) {
+        return execPromise(success, error, "GeofencePlugin", "clearRemoteServerSettings", []);
     }
 };
 

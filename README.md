@@ -350,7 +350,15 @@ window.geofence.onNotificationClicked = function (notificationData) {
 Optionally you can perform POST callouts to a remote server when a transition is handled
 
 ```javascript
-window.geofence.setRemoteServerSettings(true,'http://httpbin.org/post','foo=bar&baz=qux','Access_Token_Value');
+window.geofence.upsertRemoteServerSettings('http://httpbin.org/post','foo=bar&baz=qux','Access_Token_Value');
+```
+
+These settings are stored to the Keychain using 'afterFirstUnlock' accessibility settings to make them available in background mode
+
+You can also clear your remote server settings if necessary
+
+```javascript
+window.geofence.clearRemoteServerSettings();
 ```
 
 # Example usage
