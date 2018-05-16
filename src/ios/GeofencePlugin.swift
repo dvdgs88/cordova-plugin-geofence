@@ -5,6 +5,7 @@
 //  Created by tomasz on 07/10/14.
 //
 //
+
 import Foundation
 import AudioToolbox
 import WebKit
@@ -48,6 +49,7 @@ func log(_ messages: [String]) {
         log("Plugin initialization")
         //let faker = GeofenceFaker(manager: geoNotificationManager)
         //faker.start()
+
         if iOS8 {
             promptForNotificationPermission()
         }
@@ -139,7 +141,7 @@ func log(_ messages: [String]) {
         }
     }
 
-    func didReceiveTransition (_ notification: Notification) {
+    @objc func didReceiveTransition (_ notification: Notification) {
         log("didReceiveTransition")
         if let geoNotificationString = notification.object as? String {
 
@@ -149,7 +151,7 @@ func log(_ messages: [String]) {
         }
     }
 
-    func didReceiveLocalNotification (_ notification: Notification) {
+    @objc func didReceiveLocalNotification (_ notification: Notification) {
         log("didReceiveLocalNotification")
         if UIApplication.shared.applicationState != UIApplicationState.active {
             var data = "undefined"
@@ -160,30 +162,6 @@ func log(_ messages: [String]) {
                 let js = "setTimeout('geofence.onNotificationClicked(" + data + ")',0)"
 
                 evaluateJs(js)
-            }
-        }
-    }
-
-    func upsertRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
-        DispatchQueue.global(priority: priority).async {
-            KeychainWrapper.standard.set(command.argument(at: 0) as! String, forKey: self.geoNotificationManager.remoteServerURLName, withAccessibility: .afterFirstUnlock)
-            KeychainWrapper.standard.set(command.argument(at: 1) as! String, forKey: self.geoNotificationManager.remoteServerPostStringName, withAccessibility: .afterFirstUnlock)
-            KeychainWrapper.standard.set(command.argument(at: 2) as! String, forKey: self.geoNotificationManager.remoteServerAccessTokenName, withAccessibility: .afterFirstUnlock)
-            DispatchQueue.main.async {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            }
-        }
-    }
-
-    func clearRemoteServerSettings(_ command: CDVInvokedUrlCommand) {
-        DispatchQueue.global(priority: priority).async {
-            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerURLName)
-            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerPostStringName)
-            KeychainWrapper.standard.removeObject(forKey: self.geoNotificationManager.remoteServerAccessTokenName)
-            DispatchQueue.main.async {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
             }
         }
     }
@@ -249,9 +227,6 @@ class GeofenceFaker {
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let store = GeoNotificationStore()
-    let remoteServerURLName = "remoteServerURL"
-    let remoteServerPostStringName = "remoteServerPostString"
-    let remoteServerAccessTokenName = "remoteServerAccessToken"
 
     override init() {
         log("GeoNotificationManager init")
@@ -360,7 +335,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         store.remove(id)
         let region = getMonitoredRegion(id)
         if (region != nil) {
-            log("Stopping monitoring region \(id)")
+            log("Stoping monitoring region \(id)")
             locationManager.stopMonitoring(for: region!)
         }
     }
@@ -369,7 +344,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         store.clear()
         for object in locationManager.monitoredRegions {
             let region = object
-            log("Stopping monitoring region \(region.identifier)")
+            log("Stoping monitoring region \(region.identifier)")
             locationManager.stopMonitoring(for: region)
         }
     }
@@ -420,13 +395,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
             if geoNotification["notification"].isExists() {
                 notifyAbout(geoNotification)
-            }
-
-            let remoteServerURL: String? = KeychainWrapper.standard.string(forKey: self.remoteServerURLName)
-            let remoteServerPostString: String! = KeychainWrapper.standard.string(forKey: self.remoteServerPostStringName) ?? ""
-            let remoteServerAccessToken: String? = KeychainWrapper.standard.string(forKey: self.remoteServerAccessTokenName)
-            if remoteServerURL != nil && remoteServerAccessToken != nil {
-                HTTPHandler.postToServer(postURL: remoteServerURL, postString: remoteServerPostString, accessToken: remoteServerAccessToken)
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))

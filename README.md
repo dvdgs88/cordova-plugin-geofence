@@ -345,22 +345,6 @@ window.geofence.onNotificationClicked = function (notificationData) {
 };
 ```
 
-## Notifying remote servers when handling transitions
-
-Optionally you can perform POST callouts to a remote server when a transition is handled
-
-```javascript
-window.geofence.upsertRemoteServerSettings('http://httpbin.org/post','foo=bar&baz=qux','Access_Token_Value');
-```
-
-These settings are stored to the Keychain using 'afterFirstUnlock' accessibility settings to make them available in background mode
-
-You can also clear your remote server settings if necessary
-
-```javascript
-window.geofence.clearRemoteServerSettings();
-```
-
 # Example usage
 
 Adding geofence to monitor entering Gliwice city center area of radius 3km
