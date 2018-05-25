@@ -112,9 +112,9 @@ public struct JSON {
 
     /**
      Creates a JSON using the object.
-     
+
      - parameter object:  The object must have the following properties: All objects are NSString/String, NSNumber/Int/Float/Double/Bool, NSArray/Array, NSDictionary/Dictionary, or NSNull; All dictionary keys are NSStrings/String; NSNumbers are not NaN or infinity.
-     
+
      - returns: The created JSON
      */
     public init(_ object: Any) {
@@ -123,9 +123,9 @@ public struct JSON {
 
     /**
      Creates a JSON using the object.
-     
+
      - parameter object:  The object must have the following properties: All objects are NSString/String, NSNumber/Int/Float/Double/Bool, NSArray/Array, NSDictionary/Dictionary, or NSNull; All dictionary keys are NSStrings/String; NSNumbers are not NaN or infinity.
-     
+
      - returns: The created JSON
      */
     public init(_ object: AnyObject) {
@@ -308,7 +308,7 @@ extension JSON : Swift.Collection {
     public func makeIterator() -> JSON.Iterator {
         return JSON.Iterator(self)
     }
-    
+
     public func index(after i: JSONIndex) -> JSONIndex {
         switch self.type {
         case .array:
@@ -321,7 +321,7 @@ extension JSON : Swift.Collection {
     }
 }
 
-public struct JSONIndex: Comparable, _Incrementable, Equatable {
+public struct JSONIndex: Comparable, Equatable {
 
     let arrayIndex: Int?
     let dictionaryIndex: Dictionary<String, AnyObject>.Index?
